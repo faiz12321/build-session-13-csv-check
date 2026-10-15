@@ -1,0 +1,29 @@
+name: test
+on: [push, workflow_dispatch]
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m unittest -v
+      - run: python make_sample.py
+      - name: Reports on the sample files
+        shell: python
+        run: |
+          import subprocess, sys
+          def run(name):
+              return subprocess.run([sys.executable, "csvcheck.py", "sample/" + name], capture_output=True, text=True)
+          good = run("good.csv")
+          assert good.returncode == 0 and "No problems found" in good.stdout, good.stdout
+          quoted = run("quoted.csv")
+          assert quoted.returncode == 0 and "span more than one line: 1" in quoted.stdout, quoted.stdout
+          for name, text in (("ragged.csv", "line 3 has 2 fields"), ("bom.csv", "byte order mark"), ("semicolon.csv", "another separator")):
+              out = run(name)
+              assert out.returncode == 1 and text in out.stdout, (name, out.stdout)
+          print("Sample file reports checked.")
