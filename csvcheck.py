@@ -79,7 +79,7 @@ def problems(result):
 def report(result):
     lines = ["File: " + result["path"]]
     if result["bom"]:
-        lines.append("Problem: the file starts with a byte order mark, an invisible marker. Some programs do not expect it.")
+        lines.append("Flagged: the file starts with a UTF-8 byte order mark (the bytes EF BB BF). The tool skips it and checks the rest.")
     if result["fatal"]:
         lines.append("Problem: " + result["fatal"])
     else:
