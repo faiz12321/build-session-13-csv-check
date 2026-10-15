@@ -32,6 +32,9 @@ def check(path):
     reader = csv.reader(io.StringIO(text, newline=""), strict=True)
     try:
         header = next(reader)
+        if not header:
+            result["fatal"] = "Line 1 is blank, so the file has no header row."
+            return result
         result["columns"] = len(header)
         seen = {}
         for position, name in enumerate(header, 1):
@@ -56,7 +59,7 @@ def check(path):
     except StopIteration:
         pass
     except csv.Error as error:
-        result["fatal"] = "Line %d: %s. The tool stops at the first error of this kind." % (reader.line_num, error)
+        result["fatal"] = "Line %d: %s. The tool stops here, so counts and the other checks are not shown." % (reader.line_num, error)
     return result
 
 
@@ -87,7 +90,7 @@ def report(result):
         if result["empty_names"]:
             lines += lines_for("Empty column names", result["empty_names"], lambda p: "column %d" % p)
         if result["repeated_names"]:
-            lines += lines_for("Repeated column names", result["repeated_names"],
+            lines += lines_for("Repeated column names (exact match)", result["repeated_names"],
                                lambda item: "'%s' in columns %s" % (item[0], ", ".join(map(str, item[1]))))
         if result["wrong_length"]:
             lines += lines_for("Rows with a different number of fields than the header", result["wrong_length"],
