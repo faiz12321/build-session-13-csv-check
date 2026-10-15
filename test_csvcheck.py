@@ -105,6 +105,29 @@ class TestCheck(Base):
         self.assertIn("Line", r["fatal"])
 
 
+class TestScope(Base):
+    def test_blank_first_line_means_no_header(self):
+        r = self.run_on(b"\na,b\n1,2\n")
+        self.assertIn("no header", r["fatal"])
+        self.assertTrue(csvcheck.problems(r))
+
+    def test_line_of_spaces_is_a_row_not_a_blank_line(self):
+        r = self.run_on(b"a,b\n  \n1,2\n")
+        self.assertEqual(r["blank_lines"], [])
+        self.assertEqual(r["wrong_length"], [(2, 1)])
+
+    def test_repeated_names_must_match_exactly(self):
+        r = self.run_on(b"a,A,a \n1,2,3\n")
+        self.assertEqual(r["repeated_names"], [])
+
+    def test_quote_error_reports_no_counts(self):
+        r = self.run_on(b'a,b\n1,2\n3,"x"y\n')
+        text = csvcheck.report(r)
+        self.assertIn("Line 3", text)
+        self.assertNotIn("Data rows", text)
+        self.assertNotIn("No problems found", text)
+
+
 class TestMain(Base):
     def call(self, args):
         with contextlib.redirect_stdout(io.StringIO()) as out:
