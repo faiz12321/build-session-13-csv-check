@@ -6,7 +6,7 @@ A small read-only Python tool built step by step. Give it a CSV file (comma-sepa
 
     python make_sample.py                  # makes made-up CSV files in sample/
     python csvcheck.py sample/ragged.csv   # report on one file
-    python -m unittest -v                  # nineteen automated tests
+    python -m unittest -v                  # twenty-three automated tests
 
 On Windows, if `python` is not found, use `py`.
 
@@ -20,8 +20,10 @@ On Windows, if `python` is not found, use `py`.
 
 - It reads commas only. It does not guess other separators. If the header is one column but contains a semicolon, a tab or a pipe, it reports a possible problem.
 - Python's csv module can spread one record over several lines when a quoted field holds a line break, so a line count and a row count can differ (https://docs.python.org/3/library/csv.html). The tool reports line numbers where each record starts.
+- Repeated column names are found by exact match only: a and A, or a and a followed by a space, count as different names.
+- A blank first line is reported as a missing header. A line holding only spaces is counted as a row, not as a blank line.
 - The tool counts every problem but shows only the first five examples of each kind.
-- Unclosed quotes and text after a closing quote stop the parser. The tool reports the first such error only and stops there, so fix it and run again.
+- Unclosed quotes and text after a closing quote stop the parser. The tool reports the first such error only and stops there, so fix it and run again. When that happens the tool shows no counts, because it did not finish reading.
 - "No problems found by these checks" only means those checks passed. It does not check what the values mean, data types, or whether another program will accept the file.
 - Tested only on small made-up files, not on large or real-world files or other encodings. Python 3.10 (Linux) and, by GitHub Actions, Python 3.12 on Windows and Ubuntu. Not tested on a Windows 10 or 11 desktop.
 - Educational example, no warranty. Use at your own risk.
