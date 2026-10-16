@@ -1,36 +1,19 @@
-# Check a CSV file for mistakes
+# Check a fictional CSV file
 
-A small read-only Python tool built step by step. Give it a CSV file (comma-separated values, the plain text format spreadsheets export) and it reports rows with a different number of fields than the header, blank lines, empty or repeated column names, a byte order mark, text that is not UTF-8, and quoting that stops the parser. It only reads the file.
+Save three source files in a NEW empty lesson folder.
 
-## Run it
+    python make_sample.py
+    python csvcheck.py sample/ragged.csv
+    python -m unittest -v
 
-    python make_sample.py                  # makes made-up CSV files in sample/
-    python csvcheck.py sample/ragged.csv   # report on one file
-    python -m unittest -v                  # twenty-three automated tests
+Two Windows and two Ubuntu full replays run exact visible source versions. Final 39 small fixture tests pass (Unix pipe skips on Windows); symlink creation can skip where unavailable. Displayed stdout is first Windows output, not normalized or mixed. Pair differences are unittest time.
+Only link/error changes: final reader refuses input/ancestor symbolic links/reparse points, hardlinks, special files and traversal before opening. Metadata/open errors remain exit 2 with readable fallback text. Setup refuses linked parents/traversal and existing sample paths, without reset or deletion. The naive first version remains fictional-sample-only and must be replaced.
+Original comma-only CSV parsing, UTF-8/BOM, quoting, multiline/count, blank-line, header and length rules remain unchanged. Exits remain 0 no reported problems, 1 reported problems, 2 usage/read errors. Passing these checks is not schema, value-meaning, formula/spreadsheet safety or acceptance by another program. No separator guessing.
+The final checker has no write/move/delete/network code but reads the whole file into memory. No file-size/time/resource limit, atomic snapshot or hostile-race defense. Stop editors/sync. Paths and header names can be private. Small fictional fixtures are not proof on all filesystems. No desktop Windows/macOS recording. Recorder removes only its own temporary fixture folder. Decisions and feedback are teaching text, not recorded output.
 
-On Windows, if `python` is not found, use `py`.
+MIT code. Python separately licensed/not included.
 
-## Files
+Reference: https://docs.python.org/3/library/os.html
 
-- `csvcheck.py` - the tool
-- `make_sample.py` - makes five made-up files: good, rows of the wrong length, quoted fields with a comma and a line break, byte order mark, semicolon-separated
-- `test_csvcheck.py` - tests
-
-## Setup safety and evidence
-
-Setup refuses existing sample paths and exclusively writes five fictional CSV files in a new sample folder. It does not reset or replace old data. Start in a new empty lesson folder. Four added setup collision/repeat tests preserve nested unrelated bytes and modification times. The checker is unchanged. It reads the whole source into memory and follows source file links. Reports reveal paths, field names and excerpts; keep private output private. It checks comma/UTF-8 input, not schema, content accuracy, spreadsheet formulas or another application's acceptance.
-
-Two Windows and two Ubuntu recordings pass all 27 tests. Each platform pair differs only in unittest time. Displays use first Windows output. The recorder writes exact visible first/final versions in a unique temporary folder and removes only that folder. Setup itself refuses a repeat run. These limited checks do not prove all filesystems or consuming programs.
-
-## Notes
-
-- It reads commas only. It does not guess other separators. If the header is one column but contains a semicolon, a tab or a pipe, it reports a possible problem.
-- Python's csv module can spread one record over several lines when a quoted field holds a line break, so a line count and a row count can differ (https://docs.python.org/3/library/csv.html). The tool reports line numbers where each record starts.
-- Repeated column names are found by exact match only: a and A, or a and a followed by a space, count as different names.
-- A blank first line is reported as a missing header. A line holding only spaces is counted as a row, not as a blank line.
-- The tool counts every problem but shows only the first five examples of each kind.
-- Unclosed quotes and text after a closing quote stop the parser. The tool reports the first such error only and stops there, so fix it and run again. When that happens the tool shows no counts, because it did not finish reading.
-- "No problems found by these checks" only means those checks passed. It does not check what the values mean, data types, or whether another program will accept the file.
-- Tested only on small made-up files, not on large or real-world files or other encodings. Python 3.10 (Linux) and, by GitHub Actions, Python 3.12 on Windows and Ubuntu. Not tested on a Windows 10 or 11 desktop.
-- Educational example, no warranty. Use at your own risk.
-- Code is MIT licensed (see LICENSE). Python is a separate project with its own license; this repository does not include it.
+Windows pair: https://github.com/faiz12321/lesson-lab/actions/runs/38972246221
+Ubuntu pair: https://github.com/faiz12321/lesson-lab/actions/runs/38972330611
