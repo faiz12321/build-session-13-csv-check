@@ -6,6 +6,30 @@ It reads commas only. It does not guess other separators.
 import csv
 import io
 import sys
+import stat
+from pathlib import Path
+
+def safe_input(value, directory=False):
+    path = Path(value).absolute()
+    if '..' in path.parts:
+        raise OSError('Parent-traversal paths are unsupported.')
+    for part in [*reversed(path.parents), path]:
+        info = part.lstat()
+        if stat.S_ISLNK(info.st_mode) or getattr(info, 'st_file_attributes', 0) & 0x400:
+            raise OSError('Links/reparse points are unsupported.')
+    info = path.lstat()
+    if directory:
+        if not stat.S_ISDIR(info.st_mode):
+            raise NotADirectoryError('Expected an ordinary directory.')
+    elif not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+        raise OSError('Expected an ordinary singly linked file.')
+    return path
+
+
+
+
+
+
 
 SHOW = 5          # examples shown per kind of problem
 BOM = b"\xef\xbb\xbf"
@@ -16,7 +40,7 @@ def check(path):
     result = {"path": path, "fatal": None, "bom": False, "rows": 0, "columns": 0,
               "multiline_records": 0, "blank_lines": [], "wrong_length": [],
               "empty_names": [], "repeated_names": [], "hint": None}
-    with open(path, "rb") as handle:
+    with open(safe_input(path), "rb") as handle:
         data = handle.read()
     if data.startswith(BOM):
         result["bom"] = True
@@ -109,7 +133,7 @@ def main(argv):
     try:
         result = check(argv[1])
     except OSError as error:
-        print("Could not read the file: %s" % error.strerror)
+        print("Could not read the file: %s" % (error.strerror or error))
         return 2
     print(report(result))
     return 1 if problems(result) else 0
