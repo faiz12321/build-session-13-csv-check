@@ -16,6 +16,12 @@ On Windows, if `python` is not found, use `py`.
 - `make_sample.py` - makes five made-up files: good, rows of the wrong length, quoted fields with a comma and a line break, byte order mark, semicolon-separated
 - `test_csvcheck.py` - tests
 
+## Setup safety and evidence
+
+Setup refuses existing sample paths and exclusively writes five fictional CSV files in a new sample folder. It does not reset or replace old data. Start in a new empty lesson folder. Four added setup collision/repeat tests preserve nested unrelated bytes and modification times. The checker is unchanged. It reads the whole source into memory and follows source file links. Reports reveal paths, field names and excerpts; keep private output private. It checks comma/UTF-8 input, not schema, content accuracy, spreadsheet formulas or another application's acceptance.
+
+Two Windows and two Ubuntu recordings pass all 27 tests. Each platform pair differs only in unittest time. Displays use first Windows output. The recorder writes exact visible first/final versions in a unique temporary folder and removes only that folder. Setup itself refuses a repeat run. These limited checks do not prove all filesystems or consuming programs.
+
 ## Notes
 
 - It reads commas only. It does not guess other separators. If the header is one column but contains a semicolon, a tab or a pipe, it reports a possible problem.
