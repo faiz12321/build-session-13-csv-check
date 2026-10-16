@@ -1,0 +1,98 @@
+### CMD: python --version
+Python 3.12.10
+### EXIT: 0
+
+### CMD: python make_sample.py
+Made sample/good.csv, ragged.csv, quoted.csv, bom.csv and semicolon.csv
+### EXIT: 0
+
+### CMD: python make_sample.py
+Stopped: sample already exists. Nothing was replaced or deleted.
+### EXIT: 1
+
+### CMD: python -c "print(open('sample/ragged.csv').read())"
+name,city,age
+Amal,Riyadh,31
+Ben,Leeds
+Cara,Oslo,40,extra
+
+### EXIT: 0
+
+### CMD: python csvcheck.py sample/ragged.csv
+Rows: 3
+### EXIT: 0
+
+### CMD: python -c "print(len(open('sample/quoted.csv').read().splitlines()))"
+5
+### EXIT: 0
+
+### CMD: python csvcheck.py sample/quoted.csv
+Rows: 3
+### EXIT: 0
+
+### CMD: python csvcheck.py sample/good.csv
+File: sample/good.csv
+Columns in the header: 3. Data rows: 2. Records that span more than one line: 0.
+No problems found by these checks. This does not check what the values mean.
+### EXIT: 0
+
+### CMD: python csvcheck.py sample/ragged.csv
+File: sample/ragged.csv
+Columns in the header: 3. Data rows: 3. Records that span more than one line: 0.
+Rows with a different number of fields than the header: 2
+  line 3 has 2 fields
+  line 4 has 4 fields
+### EXIT: 1
+
+### CMD: python csvcheck.py sample/quoted.csv
+File: sample/quoted.csv
+Columns in the header: 2. Data rows: 3. Records that span more than one line: 1.
+No problems found by these checks. This does not check what the values mean.
+### EXIT: 0
+
+### CMD: python csvcheck.py sample/bom.csv
+File: sample/bom.csv
+Flagged: the file starts with a UTF-8 byte order mark (the bytes EF BB BF). The tool skips it and checks the rest.
+Columns in the header: 2. Data rows: 1. Records that span more than one line: 0.
+### EXIT: 1
+
+### CMD: python csvcheck.py sample/semicolon.csv
+File: sample/semicolon.csv
+Columns in the header: 1. Data rows: 2. Records that span more than one line: 0.
+Possible problem: the header is one column but contains ; or a tab or |. The file may use another separator, which this tool does not read.
+### EXIT: 1
+
+### CMD: python -m unittest -v
+test_cli_refuses_without_replacing (test_csvcheck.SetupSafetyTests.test_cli_refuses_without_replacing) ... ok
+test_existing_file_preserved (test_csvcheck.SetupSafetyTests.test_existing_file_preserved) ... ok
+test_existing_folder_preserves_nested_bytes_and_metadata (test_csvcheck.SetupSafetyTests.test_existing_folder_preserves_nested_bytes_and_metadata) ... ok
+test_repeat_setup_preserves_generated_bytes_and_metadata (test_csvcheck.SetupSafetyTests.test_repeat_setup_preserves_generated_bytes_and_metadata) ... ok
+test_blank_line_in_the_middle (test_csvcheck.TestCheck.test_blank_line_in_the_middle) ... ok
+test_byte_order_mark (test_csvcheck.TestCheck.test_byte_order_mark) ... ok
+test_empty_file_and_spaces_only (test_csvcheck.TestCheck.test_empty_file_and_spaces_only) ... ok
+test_good_file (test_csvcheck.TestCheck.test_good_file) ... ok
+test_header_only_is_not_a_problem (test_csvcheck.TestCheck.test_header_only_is_not_a_problem) ... ok
+test_line_number_after_a_multiline_record (test_csvcheck.TestCheck.test_line_number_after_a_multiline_record) ... ok
+test_not_utf8 (test_csvcheck.TestCheck.test_not_utf8) ... ok
+test_quoted_comma_and_newline_are_fine (test_csvcheck.TestCheck.test_quoted_comma_and_newline_are_fine) ... ok
+test_repeated_and_empty_column_names (test_csvcheck.TestCheck.test_repeated_and_empty_column_names) ... ok
+test_semicolon_file_is_flagged_as_possible_problem (test_csvcheck.TestCheck.test_semicolon_file_is_flagged_as_possible_problem) ... ok
+test_single_trailing_newline_is_not_a_blank_line (test_csvcheck.TestCheck.test_single_trailing_newline_is_not_a_blank_line) ... ok
+test_text_after_a_closing_quote_stops_with_an_error (test_csvcheck.TestCheck.test_text_after_a_closing_quote_stops_with_an_error) ... ok
+test_total_is_counted_but_only_first_examples_shown (test_csvcheck.TestCheck.test_total_is_counted_but_only_first_examples_shown) ... ok
+test_unterminated_quote_stops_with_an_error (test_csvcheck.TestCheck.test_unterminated_quote_stops_with_an_error) ... ok
+test_windows_line_endings (test_csvcheck.TestCheck.test_windows_line_endings) ... ok
+test_wrong_length_rows_have_line_numbers (test_csvcheck.TestCheck.test_wrong_length_rows_have_line_numbers) ... ok
+test_exit_codes (test_csvcheck.TestMain.test_exit_codes) ... ok
+test_file_is_not_changed (test_csvcheck.TestMain.test_file_is_not_changed) ... ok
+test_sample_files (test_csvcheck.TestMain.test_sample_files) ... ok
+test_blank_first_line_means_no_header (test_csvcheck.TestScope.test_blank_first_line_means_no_header) ... ok
+test_line_of_spaces_is_a_row_not_a_blank_line (test_csvcheck.TestScope.test_line_of_spaces_is_a_row_not_a_blank_line) ... ok
+test_quote_error_reports_no_counts (test_csvcheck.TestScope.test_quote_error_reports_no_counts) ... ok
+test_repeated_names_must_match_exactly (test_csvcheck.TestScope.test_repeated_names_must_match_exactly) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.101s
+
+OK
+### EXIT: 0
